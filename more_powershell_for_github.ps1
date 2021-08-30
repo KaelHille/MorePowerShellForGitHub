@@ -8,6 +8,18 @@ return $headers
 
 }
 
+function Add-GitHubCollaborator{
+    param( $R,$C,$U)
+
+$User="KaelHille"
+
+$api = 'https://api.github.com/repos/'+ $User + '/'+ $R + '/collaborators/'+ $U; 
+
+Invoke-RestMethod  -Method PUT -Headers $C -uri $api
+}
+
+
+
 $username = 'KaelHille'
 
 Read-Host -AsSecureString -Prompt ’token’ |
@@ -22,20 +34,7 @@ Set-GitHubAuthentication -SessionOnly `
 
 $repo = "MorePowerShellForGitHub"
 
+$authentification = Get-authHeader -Credential $C
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Add-GitHubCollaborator -R $repo -C $authentification -U "dieter-ap"
 

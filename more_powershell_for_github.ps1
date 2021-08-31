@@ -22,11 +22,29 @@ function Collaboration-invites{
     param($RepositoryName,$OwnerGroup,$MailDomains)
 
 $api ="https://api.github.com/user/repository_invitations" 
-$invitation = Invoke-RestMethod -Method Get $authentification -uri $api 
+$invitation = Invoke-RestMethod -Method Get $authentification -uri $api
 
 if($RepositoryName -ne $null)
     { 
-        $RepositoryName  
+       if ($RepositoryName -eq $invitation.repository.name)
+        {
+            Invoke-RestMethod -Method Patch -Headers $authentification -Uri 'https://api.github.com/user/repository_invitations/' + $invitation.id
+        } 
+    }
+
+
+if($OwnerGroup -ne $null)
+    {
+       $invitee = ($invitation | Select-Object -Property invitee).invitee.login
+       $inviter = ($invitation | Select-Object -Property inviter).inviter.login
+
+       $Bioveldinvitee = (Get-GitHubUser -UserName $invitee | Select-Object -Property bio).bio
+       $Bioveldinviter = (Get-GitHubUser -UserName $inviter | Select-Object -Property bio).bio
+
+       if($Bioveldinvitee -eq $Bioveldinviter)
+       {
+            Invoke-RestMethod -Method Patch -Headers $authentification -Uri 'https://api.github.com/user/repository_invitations/' + $invitation.id
+       }
     }
 }
 
@@ -48,10 +66,8 @@ $repo = "MorePowerShellForGitHub"
 
 $authentification = Get-authHeader -Credential $C
 
-$api ="https://api.github.com/user/repository_invitations" 
-$invitation = Invoke-RestMethod -Method Get $authentification -uri $api
 
-$invitation.repository
+
 
  
 

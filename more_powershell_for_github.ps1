@@ -9,13 +9,25 @@ return $headers
 }
 
 function Add-GitHubCollaborator{
-    param( $R,$C,$U)
+    param( $R,$C,$U,$authentification)
 
 $User="KaelHille"
 
 $api = 'https://api.github.com/repos/'+ $User + '/'+ $R + '/collaborators/'+ $U; 
 
 Invoke-RestMethod  -Method PUT -Headers $C -uri $api
+}
+
+function Collaboration-invites{
+    param($RepositoryName,$OwnerGroup,$MailDomains)
+
+$api ="https://api.github.com/user/repository_invitations" 
+$invitation = Invoke-RestMethod -Method Get $authentification -uri $api 
+
+if($RepositoryName -ne $null)
+    { 
+        $RepositoryName  
+    }
 }
 
 
@@ -36,5 +48,12 @@ $repo = "MorePowerShellForGitHub"
 
 $authentification = Get-authHeader -Credential $C
 
-Add-GitHubCollaborator -R $repo -C $authentification -U "dieter-ap"
+$api ="https://api.github.com/user/repository_invitations" 
+$invitation = Invoke-RestMethod -Method Get $authentification -uri $api
+
+$invitation.repository
+
+ 
+
+
 
